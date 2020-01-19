@@ -4,6 +4,7 @@ import dagger.Component
 import org.simple.clinic.DateOfBirthHintUnfocusedAndroidTest
 import org.simple.clinic.FakerModule
 import org.simple.clinic.TestClinicApp
+import org.simple.clinic.TheActivityLaunchUiTest
 import org.simple.clinic.appconfig.SelectedCountryPersistenceAndroidTest
 import org.simple.clinic.bloodsugar.BloodSugarRepositoryAndroidTest
 import org.simple.clinic.bp.BloodPressureRepositoryAndroidTest
@@ -46,7 +47,7 @@ import org.simple.clinic.util.identifierdisplay.IdentifierDisplayAdapterAndroidT
       FakerModule::class
     ]
 )
-interface TestAppComponent {
+interface TestAppComponent : AppComponent {
 
   fun inject(target: TestClinicApp)
   fun inject(target: UserSessionAndroidTest)
@@ -84,4 +85,5 @@ interface TestAppComponent {
   fun inject(target: BaseDatabaseMigrationTest)
   fun inject(target: BloodSugarRepositoryAndroidTest)
   fun inject(target: Migration57AndroidTest)
+  fun inject(target: TheActivityLaunchUiTest)
 }

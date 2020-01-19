@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.res.Resources
 import dagger.Module
 import dagger.Provides
+import org.simple.clinic.TempModule
 import org.simple.clinic.appconfig.AppConfigModule
 import org.simple.clinic.di.network.NetworkModule
 import org.simple.clinic.login.LoginModule
@@ -36,7 +37,8 @@ import java.util.Locale
   TestRemoteConfigModule::class,
   SyncModule::class,
   UuidShortCodeCreatorModule::class,
-  DateFormatterModule::class
+  DateFormatterModule::class,
+  TempModule::class
 ])
 class TestAppModule(private val application: Application) {
 

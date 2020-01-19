@@ -49,4 +49,11 @@ class TestRetrofitModule {
         .baseUrl("$baseUrl$currentApiVersion/")
         .build()
   }
+
+  @Provides
+  @AppScope
+  @Named("for_config")
+  fun configRetrofit(
+      @Named("for_country") retrofit: Retrofit
+  ): Retrofit = retrofit
 }

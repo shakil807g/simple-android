@@ -299,6 +299,10 @@ dependencies {
   androidTestRuntimeOnly ("org.ow2.asm:asm:$versions.asm") {
     because "not mandatory, but Truth recommends adding this dependency for better error reporting"
   }
+
+  androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+  androidTestImplementation 'androidx.test:runner:1.1.0'
+  androidTestImplementation 'androidx.test:rules:1.1.0'
 }
 
 // This must always be present at the bottom of this file, as per:

@@ -17,8 +17,7 @@ import javax.inject.Inject
 
 class CheckAppUpdateAvailability @Inject constructor(
     private val appContext: Application,
-    private val config: Observable<AppUpdateConfig>,
-    private val versionUpdateCheck: (Int, Application, AppUpdateConfig) -> Boolean = isVersionApplicableForUpdate
+    private val config: Observable<AppUpdateConfig>
 ) {
 
   fun listen(): Observable<AppUpdateState> {
@@ -68,7 +67,7 @@ class CheckAppUpdateAvailability @Inject constructor(
     return config.inAppUpdateEnabled
         && appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
         && appUpdateInfo.isUpdateTypeAllowed(FLEXIBLE)
-        && versionUpdateCheck(appUpdateInfo.availableVersionCode(), appContext, config)
+        && isVersionApplicableForUpdate(appUpdateInfo.availableVersionCode(), appContext, config)
   }
 }
 

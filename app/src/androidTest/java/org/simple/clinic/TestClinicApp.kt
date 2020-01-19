@@ -1,6 +1,5 @@
 package org.simple.clinic
 
-import android.app.Application
 import com.gabrielittner.threetenbp.LazyThreeTen
 import com.tspoon.traceur.Traceur
 import org.simple.clinic.TestClinicApp.Companion.appComponent
@@ -13,7 +12,7 @@ import timber.log.Timber
  * This application class makes it possible to inject Android tests with their dependencies.
  * Using [appComponent] in a test's @Before function is a good place to start.
  */
-class TestClinicApp : Application() {
+class TestClinicApp : ClinicApp() {
 
   companion object {
     private lateinit var appComponent: TestAppComponent
@@ -32,7 +31,7 @@ class TestClinicApp : Application() {
     appComponent = buildDaggerGraph()
   }
 
-  private fun buildDaggerGraph(): TestAppComponent {
+  override fun buildDaggerGraph(): TestAppComponent {
     return DaggerTestAppComponent.builder()
         .testAppModule(TestAppModule(this))
         .build()

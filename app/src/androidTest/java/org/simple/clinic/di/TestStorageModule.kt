@@ -10,10 +10,12 @@ import org.simple.clinic.patient.PatientModule
 import org.simple.clinic.storage.FileStorageModule
 import org.simple.clinic.storage.migrations.RoomMigrationsModule
 import org.simple.clinic.storage.SharedPreferencesModule
+import org.simple.clinic.storage.StorageModule
 import org.simple.clinic.summary.PatientSummaryModule
 import org.simple.clinic.user.User
 
 @Module(includes = [
+  StorageModule::class,
   RoomMigrationsModule::class,
   SharedPreferencesModule::class,
   PatientModule::class,
@@ -21,8 +23,8 @@ import org.simple.clinic.user.User
   PatientSummaryModule::class
 ])
 class TestStorageModule {
-
-  @Provides
+  
+  /*@Provides
   fun sqliteOpenHelperFactory(): SupportSQLiteOpenHelper.Factory = AppSqliteOpenHelperFactory(inMemory = true)
 
   @AppScope
@@ -41,5 +43,5 @@ class TestStorageModule {
   @Provides
   fun userDao(appDatabase: AppDatabase): User.RoomDao {
     return appDatabase.userDao()
-  }
+  }*/
 }
