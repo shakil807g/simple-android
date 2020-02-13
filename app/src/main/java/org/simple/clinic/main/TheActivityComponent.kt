@@ -21,6 +21,7 @@ import org.simple.clinic.bp.entry.BloodPressureEntrySheet
 import org.simple.clinic.bp.entry.confirmremovebloodpressure.ConfirmRemoveBloodPressureDialog
 import org.simple.clinic.bp.entry.di.BloodPressureEntryModule
 import org.simple.clinic.bp.history.BloodPressureHistoryScreenInjector
+import org.simple.clinic.deniedaccess.AccessDeniedScreen
 import org.simple.clinic.di.AssistedInjectModule
 import org.simple.clinic.drugs.selection.PrescribedDrugScreen
 import org.simple.clinic.drugs.selection.dosage.DosagePickerSheet
@@ -149,6 +150,8 @@ interface TheActivityComponent :
   fun inject(target: EditPatientScreen)
   fun inject(target: SettingsScreen)
   fun inject(target: ChangeLanguageScreen)
+  fun inject(target: BloodSugarEntrySheet)
+  fun inject(target: AccessDeniedScreen)
 
   @Subcomponent.Builder
   interface Builder : BindsActivity<Builder>, BindsScreenRouter<Builder> {
