@@ -23,5 +23,6 @@ android {
 }
 
 dependencies {
+  api "com.jakewharton.timber:timber:$versions.timber"
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
 }
