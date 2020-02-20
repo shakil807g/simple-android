@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.os.Parcelable
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.Connection
+import com.spotify.mobius.First
 import com.spotify.mobius.First.first
 import com.spotify.mobius.Init
 import com.spotify.mobius.MobiusLoop
+import com.spotify.mobius.Next
 import com.spotify.mobius.Update
 import com.spotify.mobius.android.MobiusAndroid
 import com.spotify.mobius.extras.Connectables
@@ -17,6 +19,7 @@ import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.disposables.Disposable
 import org.simple.clinic.platform.crash.CrashReporter
+import timber.log.Timber
 import kotlin.LazyThreadSafetyMode.NONE
 
 class MobiusDelegate<M : Parcelable, E, F>(
@@ -45,6 +48,42 @@ class MobiusDelegate<M : Parcelable, E, F>(
         )
         .init(init)
         .eventSource(mobiusEventSource)
+        .logger(object : MobiusLoop.Logger<M, E, F> {
+
+          val isInteresting = { m: M -> m.javaClass.canonicalName == "org.simple.clinic.summary.PatientSummaryModel" }
+
+          override fun afterUpdate(model: M, event: E, result: Next<M, F>) {
+            if (isInteresting(model)) {
+              Timber.tag("WTF").i("Update: ${this@MobiusDelegate}, event: $event")
+            }
+          }
+
+          override fun afterInit(model: M, result: First<M, F>) {
+            if (isInteresting(model)) {
+              Timber.tag("WTF").i("Init: ${this@MobiusDelegate}")
+            }
+          }
+
+          override fun beforeInit(model: M) {
+            if (isInteresting(model)) {
+              //              Timber.tag("WTF").i("BEFORE INIT: ${this@MobiusDelegate}, ${model.javaClass.canonicalName}")
+            }
+          }
+
+          override fun beforeUpdate(model: M, event: E) {
+            if (isInteresting(model)) {
+              //              Timber.tag("WTF").i("BEFORE UPDATE: ${this@MobiusDelegate}, event: $event")
+            }
+          }
+
+          override fun exceptionDuringInit(model: M, exception: Throwable) {
+            Timber.tag("WTF").e(exception)
+          }
+
+          override fun exceptionDuringUpdate(model: M, event: E, exception: Throwable) {
+            Timber.tag("WTF").e(exception)
+          }
+        })
   }
 
   private val mobiusEventSource by lazy(NONE) {
