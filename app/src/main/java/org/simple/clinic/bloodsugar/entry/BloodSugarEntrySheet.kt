@@ -146,8 +146,14 @@ class BloodSugarEntrySheet : BottomSheetActivity(), BloodSugarEntryUi, RemoveBlo
       }
 
       when (measurementType) {
-        is HbA1c -> bloodSugarReadingUnitLabel.text = getString(R.string.bloodsugarentry_percentage)
-        is Random, is PostPrandial, is Fasting -> bloodSugarReadingUnitLabel.text = getString(R.string.bloodsugarentry_mg_dl)
+        is HbA1c -> {
+          bloodSugarReadingEditText.inputType = EditorInfo.TYPE_CLASS_NUMBER or EditorInfo.TYPE_NUMBER_FLAG_DECIMAL
+          bloodSugarReadingUnitLabel.text = getString(R.string.bloodsugarentry_percentage)
+        }
+        is Random, is PostPrandial, is Fasting -> {
+          bloodSugarReadingEditText.inputType = EditorInfo.TYPE_CLASS_NUMBER
+          bloodSugarReadingUnitLabel.text = getString(R.string.bloodsugarentry_mg_dl)
+        }
       }
     }
 
