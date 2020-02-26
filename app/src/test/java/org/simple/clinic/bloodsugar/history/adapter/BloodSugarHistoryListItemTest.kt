@@ -32,12 +32,12 @@ class BloodSugarHistoryListItemTest {
     // when
     val bloodSugar1 = PatientMocker.bloodSugar(
         uuid = UUID.fromString("5eb4e57f-69c5-4ade-be4b-5371d0d13bd2"),
-        reading = BloodSugarReading(420.toFloat(), Random),
+        reading = BloodSugarReading(420.toString(), Random),
         recordedAt = Instant.parse("2020-01-01T00:00:00Z")
     )
     val bloodSugar2 = PatientMocker.bloodSugar(
         uuid = UUID.fromString("a6027293-5e2b-4289-9ccd-a4befc3be1b3"),
-        reading = BloodSugarReading(168.toFloat(), PostPrandial),
+        reading = BloodSugarReading(168.toString(), PostPrandial),
         recordedAt = Instant.parse("2020-01-05T00:00:00Z")
     )
     val listItems = BloodSugarHistoryListItem.from(
@@ -63,17 +63,17 @@ class BloodSugarHistoryListItemTest {
     // when
     val bloodSugar1 = PatientMocker.bloodSugar(
         uuid = UUID.fromString("b0001467-88b2-44ad-b046-7b7d5f905979"),
-        reading = BloodSugarReading(250.toFloat(), PostPrandial),
+        reading = BloodSugarReading(250.toString(), PostPrandial),
         recordedAt = Instant.parse("2020-01-16T10:00:00Z")
     )
     val bloodSugar2 = PatientMocker.bloodSugar(
         uuid = UUID.fromString("c1dde486-feef-4e46-a70e-61139ffaf20e"),
-        reading = BloodSugarReading(455.toFloat(), Random),
+        reading = BloodSugarReading(455.toString(), Random),
         recordedAt = Instant.parse("2020-01-16T09:00:00Z")
     )
     val bloodSugar3 = PatientMocker.bloodSugar(
         uuid = UUID.fromString("94304037-889b-476c-a95f-ecb4de897d6e"),
-        reading = BloodSugarReading(650.toFloat(), Fasting),
+        reading = BloodSugarReading(650.toString(), Fasting),
         recordedAt = Instant.parse("2019-11-22T00:00:00Z")
     )
     val listItems = BloodSugarHistoryListItem.from(
@@ -104,13 +104,13 @@ class BloodSugarHistoryListItemTest {
 
     val bloodSugarNow = PatientMocker.bloodSugar(
         uuid = UUID.fromString("c78b2bdf-1d38-439d-b755-91414d76b031"),
-        reading = BloodSugarReading(120, Random),
+        reading = BloodSugarReading(120.toString(), Random),
         recordedAt = recordedAt,
         timestamps = Timestamps.create(testUtcClock)
     )
     val bloodSugarInPast = PatientMocker.bloodSugar(
         uuid = UUID.fromString("270cf83f-913d-47c5-ab4d-dd8a742ccad2"),
-        reading = BloodSugarReading(156, PostPrandial),
+        reading = BloodSugarReading(156.toString(), PostPrandial),
         recordedAt = recordedAt.minus(1, DAYS),
         timestamps = Timestamps(
             createdAt = createdAt.minus(15, MINUTES),

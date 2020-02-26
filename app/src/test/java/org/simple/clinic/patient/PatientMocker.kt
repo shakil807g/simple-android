@@ -516,7 +516,7 @@ object PatientMocker {
 
   fun bloodSugar(
       uuid: UUID = UUID.randomUUID(),
-      reading: BloodSugarReading = BloodSugarReading(600.toFloat(), org.simple.clinic.bloodsugar.Random),
+      reading: BloodSugarReading = BloodSugarReading(600.toString(), org.simple.clinic.bloodsugar.Random),
       patientUuid: UUID = UUID.randomUUID(),
       recordedAt: Instant = Instant.now(),
       userUuid: UUID = UUID.randomUUID(),
