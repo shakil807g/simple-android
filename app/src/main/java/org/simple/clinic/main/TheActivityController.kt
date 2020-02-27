@@ -9,9 +9,11 @@ import io.reactivex.rxkotlin.ofType
 import org.simple.clinic.ReportAnalyticsEvents
 import org.simple.clinic.activity.ActivityLifecycle.Started
 import org.simple.clinic.activity.ActivityLifecycle.Stopped
+import org.simple.clinic.deniedaccess.AccessDeniedScreenKey
 import org.simple.clinic.forgotpin.createnewpin.ForgotPinCreateNewPinScreenKey
 import org.simple.clinic.home.HomeScreenKey
 import org.simple.clinic.login.applock.AppLockConfig
+import org.simple.clinic.patient.PatientRepository
 import org.simple.clinic.registration.phone.RegistrationPhoneScreenKey
 import org.simple.clinic.router.screen.FullScreenKey
 import org.simple.clinic.user.NewlyVerifiedUser
@@ -35,6 +37,7 @@ typealias UiChange = (Ui) -> Unit
 class TheActivityController @Inject constructor(
     private val userSession: UserSession,
     private val appLockConfig: Single<AppLockConfig>,
+    private val patientRepository: PatientRepository,
     @Named("should_lock_after") private val lockAfterTimestamp: Preference<Instant>
 ) : ObservableTransformer<UiEvent, UiChange> {
 
@@ -48,8 +51,7 @@ class TheActivityController @Inject constructor(
         updateLockTime(replayedEvents),
         displayUserLoggedOutOnOtherDevice(replayedEvents),
         redirectToLoginScreen(),
-        showAccessDeniedToUser(replayedEvents),
-        hideAccessDeniedToUser(replayedEvents)
+        redirectToAccessDeniedScreen()
     )
   }
 
@@ -96,24 +98,6 @@ class TheActivityController @Inject constructor(
         }
   }
 
-  private fun showAccessDeniedToUser(events: Observable<UiEvent>): Observable<UiChange> {
-    return events
-        .ofType<Started>()
-        .flatMap { userSession.loggedInUser() }
-        .filterAndUnwrapJust()
-        .filter { it.status == UserStatus.DisapprovedForSyncing }
-        .map { { ui: Ui -> ui.showAccessDeniedScreen(it.fullName) } }
-  }
-
-  private fun hideAccessDeniedToUser(events: Observable<UiEvent>): Observable<UiChange> {
-    return events
-        .ofType<Started>()
-        .flatMap { userSession.loggedInUser() }
-        .filterAndUnwrapJust()
-        .filter { it.status != UserStatus.DisapprovedForSyncing }
-        .map { { ui: Ui -> ui.hideAccessDeniedScreen() } }
-  }
-
   private fun displayUserLoggedOutOnOtherDevice(events: Observable<UiEvent>): Observable<UiChange> {
     return events.ofType<Started>()
         .flatMap { userSession.loggedInUser() }
@@ -124,6 +108,8 @@ class TheActivityController @Inject constructor(
   fun initialScreenKey(): FullScreenKey {
     val localUser = userSession.loggedInUser().blockingFirst().toNullable()
 
+    val userDisapproved = localUser?.status == UserStatus.DisapprovedForSyncing
+
     val canMoveToHomeScreen = when (localUser?.loggedInStatus) {
       NOT_LOGGED_IN, RESETTING_PIN, UNAUTHORIZED -> false
       LOGGED_IN, OTP_REQUESTED, RESET_PIN_REQUESTED -> true
@@ -131,13 +117,11 @@ class TheActivityController @Inject constructor(
     }
 
     return when {
-      canMoveToHomeScreen -> HomeScreenKey()
+      canMoveToHomeScreen && !userDisapproved -> HomeScreenKey()
+      userDisapproved -> AccessDeniedScreenKey(localUser?.fullName!!)
       else -> {
-        return if (localUser?.loggedInStatus == RESETTING_PIN) {
-          ForgotPinCreateNewPinScreenKey()
-        } else {
-          RegistrationPhoneScreenKey()
-        }
+        return if (localUser?.loggedInStatus == RESETTING_PIN) ForgotPinCreateNewPinScreenKey()
+        else RegistrationPhoneScreenKey()
       }
     }
   }
@@ -148,5 +132,16 @@ class TheActivityController @Inject constructor(
         .distinctUntilChanged()
         .filter { isUserUnauthorized -> isUserUnauthorized }
         .map { Ui::redirectToLogin }
+  }
+
+  private fun redirectToAccessDeniedScreen(): Observable<UiChange> {
+    return userSession
+        .isUserDisapproved()
+        .filter { isUserDisapproved -> isUserDisapproved }
+        .flatMap {
+          val fullName = userSession.loggedInUserImmediate()?.fullName
+          patientRepository.clearPatientData()
+              .andThen(Observable.just { ui: Ui -> ui.showAccessDeniedScreen(fullName!!) })
+        }
   }
 }
